@@ -8,7 +8,7 @@ A full-stack, role-based Learning Management System built with **React (Vite)**,
 
 - **Live Frontend URL:** [https://your-frontend-domain.netlify.app](https://your-frontend-domain.netlify.app)
 - **Live Backend URL:** [https://your-backend-service.onrender.com](https://your-backend-service.onrender.com)
-- **GitHub Repository:** [https://github.com/your-username/basic-lms](https://github.com/your-username/basic-lms)
+- **GitHub Repository:** [https://github.com/devanandh08/Basic-LMS](https://github.com/devanandh08/Basic-LMS)
 - **Demo Video Link:** [https://loom.com/share/... or YouTube link](https://loom.com)
 - **Postman Collection:** Included in repository root as [`postman_collection.json`](./postman_collection.json)
 - **ER Diagram:** Included in [`docs/ER_DIAGRAM.md`](./docs/ER_DIAGRAM.md)
