@@ -11,6 +11,31 @@ import {
   RefreshIcon
 } from '../components/Icons';
 
+const getCourseImage = (course) => {
+  if (course?.imageUrl && course.imageUrl.startsWith('http')) {
+    return course.imageUrl;
+  }
+  const title = (course?.title || '').toLowerCase();
+  const category = (course?.category || '').toLowerCase();
+  
+  if (title.includes('potter') || title.includes('dark arts') || title.includes('magic') || title.includes('spell')) {
+    return 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80';
+  }
+  if (category.includes('data') || title.includes('machine learning') || title.includes('python')) {
+    return 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80';
+  }
+  if (category.includes('web') || title.includes('bootcamp') || title.includes('react') || title.includes('node') || title.includes('fullstack') || title.includes('full-stack')) {
+    return 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80';
+  }
+  if (category.includes('design') || title.includes('ui') || title.includes('ux')) {
+    return 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=800&q=80';
+  }
+  if (category.includes('business') || title.includes('management') || title.includes('finance')) {
+    return 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80';
+  }
+  return 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80';
+};
+
 export default function CourseList() {
   const { user } = useContext(AuthContext);
 
@@ -167,51 +192,64 @@ export default function CourseList() {
               const courseCode = course.accessCode || 'POTTER101';
 
               return (
-                <div key={course._id} className="card card-hoverable" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
-                      <span className="badge badge-student">
+                <div key={course._id} className="card card-hoverable" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 0, overflow: 'hidden' }}>
+                  <div className="course-card-thumb">
+                    <img
+                      src={getCourseImage(course)}
+                      alt={course.title}
+                      className="course-card-image"
+                      loading="lazy"
+                    />
+                    <div style={{ position: 'absolute', top: '12px', left: '12px', zIndex: 2 }}>
+                      <span className="badge badge-student" style={{ backdropFilter: 'blur(8px)', backgroundColor: 'rgba(9, 9, 11, 0.75)', border: '1px solid rgba(255, 255, 255, 0.2)', color: '#ffffff' }}>
                         <BookOpenIcon size={12} />
                         {course.category}
                       </span>
-                      
+                    </div>
+
+                    <div style={{ position: 'absolute', top: '12px', right: '12px', zIndex: 2 }}>
                       {isUnlocked ? (
-                        <span className="badge badge-unlocked">
-                          <UnlockIcon size={12} color="var(--jade)" />
+                        <span className="badge badge-unlocked" style={{ backdropFilter: 'blur(8px)', backgroundColor: 'rgba(5, 46, 22, 0.85)', border: '1px solid var(--jade)', color: '#4ade80' }}>
+                          <UnlockIcon size={12} color="#4ade80" />
                           Unlocked
                         </span>
                       ) : (
-                        <span className="badge badge-locked">
-                          <LockIcon size={12} color="var(--red-accent)" />
+                        <span className="badge badge-locked" style={{ backdropFilter: 'blur(8px)', backgroundColor: 'rgba(69, 10, 10, 0.85)', border: '1px solid var(--red-accent)', color: '#fca5a5' }}>
+                          <LockIcon size={12} color="#fca5a5" />
                           Code Protected
                         </span>
                       )}
                     </div>
-
-                    <h3 style={{ margin: '6px 0 10px 0', fontSize: '18px', color: 'var(--obsidian)' }}>{course.title}</h3>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.5', marginBottom: '16px' }}>
-                      {course.description ? (course.description.length > 130 ? `${course.description.substring(0, 130)}...` : course.description) : 'No description provided.'}
-                    </p>
-
-                    {isOwner && (
-                      <div style={{ padding: '8px 12px', background: 'var(--blue-surface)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--blue-border)', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <span style={{ fontSize: '12px', color: 'var(--blue)', fontWeight: 600 }}>Access Code:</span>
-                        <strong className="badge-code">{courseCode}</strong>
-                      </div>
-                    )}
+                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '36px', background: 'linear-gradient(to top, rgba(9, 9, 11, 0.7), transparent)' }} />
                   </div>
 
-                  <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px' }}>
-                    <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                      Instructor: <strong style={{ color: 'var(--charcoal)' }}>{course.instructor?.name || 'Instructor'}</strong>
+                  <div style={{ padding: '20px 20px 18px 20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <div>
+                      <h3 style={{ margin: '0 0 10px 0', fontSize: '18px', color: 'var(--obsidian)' }}>{course.title}</h3>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.5', marginBottom: '16px' }}>
+                        {course.description ? (course.description.length > 120 ? `${course.description.substring(0, 120)}...` : course.description) : 'No description provided.'}
+                      </p>
+
+                      {isOwner && (
+                        <div style={{ padding: '8px 12px', background: 'var(--blue-surface)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--blue-border)', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <span style={{ fontSize: '12px', color: 'var(--blue)', fontWeight: 600 }}>Access Code:</span>
+                          <strong className="badge-code">{courseCode}</strong>
+                        </div>
+                      )}
                     </div>
-                    <Link
-                      to={`/courses/${course._id}`}
-                      className={`btn btn-sm ${isUnlocked ? 'btn-jade' : 'btn-secondary'}`}
-                    >
-                      {isUnlocked ? 'Open Course' : 'Unlock / View'}
-                      <ArrowRightIcon size={14} />
-                    </Link>
+
+                    <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
+                      <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                        Instructor: <strong style={{ color: 'var(--charcoal)' }}>{course.instructor?.name || 'Instructor'}</strong>
+                      </div>
+                      <Link
+                        to={`/courses/${course._id}`}
+                        className={`btn btn-sm ${isUnlocked ? 'btn-jade' : 'btn-secondary'}`}
+                      >
+                        {isUnlocked ? 'Open Course' : 'Unlock / View'}
+                        <ArrowRightIcon size={14} />
+                      </Link>
+                    </div>
                   </div>
                 </div>
               );

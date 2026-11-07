@@ -9,6 +9,31 @@ import {
   RefreshIcon
 } from '../components/Icons';
 
+const getCourseImage = (course) => {
+  if (course?.imageUrl && course.imageUrl.startsWith('http')) {
+    return course.imageUrl;
+  }
+  const title = (course?.title || '').toLowerCase();
+  const category = (course?.category || '').toLowerCase();
+  
+  if (title.includes('potter') || title.includes('dark arts') || title.includes('magic') || title.includes('spell')) {
+    return 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80';
+  }
+  if (category.includes('data') || title.includes('machine learning') || title.includes('python')) {
+    return 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80';
+  }
+  if (category.includes('web') || title.includes('bootcamp') || title.includes('react') || title.includes('node') || title.includes('fullstack') || title.includes('full-stack')) {
+    return 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80';
+  }
+  if (category.includes('design') || title.includes('ui') || title.includes('ux')) {
+    return 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=800&q=80';
+  }
+  if (category.includes('business') || title.includes('management') || title.includes('finance')) {
+    return 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80';
+  }
+  return 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80';
+};
+
 export default function MyLearning() {
   const { token } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState('courses');
@@ -138,26 +163,38 @@ export default function MyLearning() {
                   <div
                     key={enrollment._id}
                     className="card card-hoverable"
-                    style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+                    style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 0, overflow: 'hidden' }}
                   >
-                    <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                        <span className="badge badge-student">{course.category || 'Course'}</span>
-                        <span className={`status-badge ${enrollment.completed ? 'status-passed' : 'status-failed'}`}>
+                    <div className="course-card-thumb" style={{ height: '140px' }}>
+                      <img
+                        src={getCourseImage(course)}
+                        alt={course.title}
+                        className="course-card-image"
+                        loading="lazy"
+                      />
+                      <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 2 }}>
+                        <span className="badge badge-student" style={{ backdropFilter: 'blur(8px)', backgroundColor: 'rgba(9, 9, 11, 0.75)', border: '1px solid rgba(255, 255, 255, 0.2)', color: '#ffffff' }}>
+                          {course.category || 'Course'}
+                        </span>
+                      </div>
+                      <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 2 }}>
+                        <span className={`status-badge ${enrollment.completed ? 'status-passed' : 'status-failed'}`} style={{ backdropFilter: 'blur(8px)' }}>
                           {enrollment.completed ? 'Completed' : 'In Progress'}
                         </span>
                       </div>
+                    </div>
 
-                      <h3 style={{ margin: '8px 0', fontSize: '18px' }}>{course.title}</h3>
-                      <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.45', marginBottom: '16px' }}>
-                        {course.description ? (course.description.length > 100 ? `${course.description.substring(0, 100)}...` : course.description) : 'No description'}
+                    <div style={{ padding: '16px 18px 0 18px' }}>
+                      <h3 style={{ margin: '0 0 8px 0', fontSize: '17px' }}>{course.title}</h3>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', lineHeight: '1.45', marginBottom: '12px' }}>
+                        {course.description ? (course.description.length > 90 ? `${course.description.substring(0, 90)}...` : course.description) : 'No description'}
                       </p>
                       <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', marginBottom: '14px' }}>
                         Instructor: <strong style={{ color: 'var(--charcoal)' }}>{course.instructor?.name || 'Instructor'}</strong>
                       </p>
                     </div>
 
-                    <div>
+                    <div style={{ padding: '0 18px 18px 18px' }}>
                       <div style={{ marginBottom: '16px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '6px', color: 'var(--charcoal)' }}>
                           <span>Course Progress</span>

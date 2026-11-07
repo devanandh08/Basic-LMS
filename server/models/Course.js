@@ -33,6 +33,11 @@ const courseSchema = new mongoose.Schema({
   isPrivate: {
     type: Boolean,
     default: false
+  },
+  imageUrl: {
+    type: String,
+    trim: true,
+    default: ''
   }
 }, { timestamps: true });
 

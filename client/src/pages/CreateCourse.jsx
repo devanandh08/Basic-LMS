@@ -132,6 +132,53 @@ export default function CreateCourse() {
           </div>
 
           <div className="form-group">
+            <label>Course Cover Image URL (Optional)</label>
+            <input
+              type="url"
+              name="imageUrl"
+              className="form-control"
+              value={formData.imageUrl || ''}
+              onChange={handleChange}
+              placeholder="https://images.unsplash.com/..."
+            />
+            <div style={{ display: 'flex', gap: '6px', marginTop: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+              <span style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>Quick Presets:</span>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                style={{ padding: '2px 8px', fontSize: '11px' }}
+                onClick={() => setFormData(prev => ({ ...prev, imageUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80' }))}
+              >
+                Code / Web
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                style={{ padding: '2px 8px', fontSize: '11px' }}
+                onClick={() => setFormData(prev => ({ ...prev, imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80' }))}
+              >
+                Data Science
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                style={{ padding: '2px 8px', fontSize: '11px' }}
+                onClick={() => setFormData(prev => ({ ...prev, imageUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80' }))}
+              >
+                Cyber / Magic
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                style={{ padding: '2px 8px', fontSize: '11px' }}
+                onClick={() => setFormData(prev => ({ ...prev, imageUrl: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1200&q=80' }))}
+              >
+                UI/UX Design
+              </button>
+            </div>
+          </div>
+
+          <div className="form-group">
             <label>Description *</label>
             <textarea
               name="description"

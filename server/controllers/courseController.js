@@ -122,7 +122,7 @@ export const verifyCourseCode = async (req, res) => {
 
 export const createCourse = async (req, res) => {
   try {
-    let { title, description, category, isPublished, accessCode, isPrivate } = req.body;
+    let { title, description, category, isPublished, accessCode, isPrivate, imageUrl } = req.body;
     if (!title || !description || !category) {
       return res.status(400).json({ success: false, message: 'Title, description, and category are required' });
     }
@@ -138,6 +138,7 @@ export const createCourse = async (req, res) => {
       description,
       category,
       accessCode,
+      imageUrl: imageUrl ? imageUrl.trim() : '',
       isPrivate: Boolean(isPrivate),
       isPublished: isPublished !== undefined ? isPublished : true,
       instructor: req.user._id

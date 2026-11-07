@@ -172,13 +172,14 @@ router.post('/courses', (req, res) => {
   if (!user || (user.role !== 'admin' && user.role !== 'instructor')) {
     return res.status(403).json({ success: false, message: 'Not authorized' });
   }
-  const { title, description, category, accessCode, isPublished, isPrivate } = req.body;
+  const { title, description, category, accessCode, isPublished, isPrivate, imageUrl } = req.body;
   const newCourse = {
     _id: 'course-' + Date.now(),
     title,
     description,
     category,
     accessCode: accessCode ? accessCode.trim().toUpperCase() : 'LMS-' + Math.random().toString(36).substring(2, 6).toUpperCase(),
+    imageUrl: imageUrl ? imageUrl.trim() : '',
     isPrivate: Boolean(isPrivate),
     isPublished: isPublished !== undefined ? isPublished : true,
     instructor: { _id: user._id, name: user.name, email: user.email },

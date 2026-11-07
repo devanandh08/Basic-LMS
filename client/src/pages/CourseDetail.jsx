@@ -16,6 +16,31 @@ import {
   RefreshIcon
 } from '../components/Icons';
 
+const getCourseImage = (course) => {
+  if (course?.imageUrl && course.imageUrl.startsWith('http')) {
+    return course.imageUrl;
+  }
+  const title = (course?.title || '').toLowerCase();
+  const category = (course?.category || '').toLowerCase();
+  
+  if (title.includes('potter') || title.includes('dark arts') || title.includes('magic') || title.includes('spell')) {
+    return 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80';
+  }
+  if (category.includes('data') || title.includes('machine learning') || title.includes('python')) {
+    return 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80';
+  }
+  if (category.includes('web') || title.includes('bootcamp') || title.includes('react') || title.includes('node') || title.includes('fullstack') || title.includes('full-stack')) {
+    return 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80';
+  }
+  if (category.includes('design') || title.includes('ui') || title.includes('ux')) {
+    return 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1200&q=80';
+  }
+  if (category.includes('business') || title.includes('management') || title.includes('finance')) {
+    return 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80';
+  }
+  return 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1200&q=80';
+};
+
 export default function CourseDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -424,76 +449,87 @@ export default function CourseDetail() {
       {message && <div className="alert alert-success">{message}</div>}
       {error && <div className="alert alert-error">{error}</div>}
 
+      <div className="course-hero-banner">
+        <img
+          src={getCourseImage(course)}
+          alt={course.title}
+          className="course-hero-image"
+        />
+        <div className="course-hero-content">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                <span className="badge badge-student" style={{ backgroundColor: 'rgba(9, 9, 11, 0.8)', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' }}>
+                  <BookOpenIcon size={12} />
+                  {course.category}
+                </span>
+                {canAccessContent ? (
+                  <span className="badge badge-unlocked" style={{ backgroundColor: 'rgba(5, 46, 22, 0.9)', border: '1px solid var(--jade)', color: '#4ade80' }}>
+                    <UnlockIcon size={12} color="#4ade80" />
+                    Unlocked
+                  </span>
+                ) : (
+                  <span className="badge badge-locked" style={{ backgroundColor: 'rgba(69, 10, 10, 0.9)', border: '1px solid var(--red-accent)', color: '#fca5a5' }}>
+                    <LockIcon size={12} color="#fca5a5" />
+                    Access Code Protected
+                  </span>
+                )}
+              </div>
+              <h1 style={{ fontSize: '30px', color: '#ffffff', marginBottom: '12px', fontWeight: 800 }}>{course.title}</h1>
+            </div>
+
+            {isInstructor && (
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  onClick={() => setShowEditCourseModal(!showEditCourseModal)}
+                  className="btn btn-sm"
+                  style={{ backgroundColor: 'rgba(255, 255, 255, 0.15)', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.25)' }}
+                >
+                  <EditIcon size={13} />
+                  Edit Details
+                </button>
+                <button
+                  onClick={handleDeleteCourse}
+                  className="btn btn-danger btn-sm"
+                >
+                  <TrashIcon size={13} />
+                  Delete Course
+                </button>
+              </div>
+            )}
+          </div>
+
+          <p style={{ color: '#e2e8f0', fontSize: '15px', lineHeight: '1.6', margin: '8px 0 16px 0', maxWidth: '800px' }}>
+            {course.description}
+          </p>
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', paddingTop: '14px', borderTop: '1px solid rgba(255, 255, 255, 0.15)' }}>
+            <div style={{ fontSize: '13.5px', color: '#cbd5e1' }}>
+              Instructor: <strong style={{ color: '#ffffff' }}>{course.instructor?.name || 'Instructor'}</strong> ({course.instructor?.email || 'N/A'})
+            </div>
+
+            {isInstructor ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '13px', color: '#94a3b8' }}>Student Access Code:</span>
+                <span className="badge-code" style={{ padding: '4px 10px', borderRadius: 'var(--radius-xs)', fontSize: '13px', fontWeight: 700 }}>
+                  {courseCode}
+                </span>
+                <button onClick={copyAccessCode} className="btn btn-secondary btn-sm" style={{ padding: '4px 8px', fontSize: '12px', backgroundColor: 'rgba(255, 255, 255, 0.15)', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' }}>
+                  <CopyIcon size={12} />
+                  {copiedCode ? 'Copied' : 'Copy'}
+                </button>
+              </div>
+            ) : (
+              <div style={{ fontSize: '13px', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <LockIcon size={14} color="#fca5a5" />
+                Code Protected Enrollment
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="card" style={{ marginBottom: '28px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-              <span className="badge badge-student">
-                <BookOpenIcon size={12} />
-                {course.category}
-              </span>
-              {canAccessContent ? (
-                <span className="badge badge-unlocked">
-                  <UnlockIcon size={12} color="var(--jade)" />
-                  Unlocked
-                </span>
-              ) : (
-                <span className="badge badge-locked">
-                  <LockIcon size={12} color="var(--red-accent)" />
-                  Access Code Protected
-                </span>
-              )}
-            </div>
-            <h1 style={{ fontSize: '28px', marginBottom: '12px' }}>{course.title}</h1>
-          </div>
-
-          {isInstructor && (
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button
-                onClick={() => setShowEditCourseModal(!showEditCourseModal)}
-                className="btn btn-secondary btn-sm"
-              >
-                <EditIcon size={13} />
-                Edit Details
-              </button>
-              <button
-                onClick={handleDeleteCourse}
-                className="btn btn-danger btn-sm"
-              >
-                <TrashIcon size={13} />
-                Delete Course
-              </button>
-            </div>
-          )}
-        </div>
-
-        <p style={{ color: 'var(--charcoal)', fontSize: '15px', lineHeight: '1.6', margin: '8px 0 16px 0' }}>
-          {course.description}
-        </p>
-
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', padding: '12px 16px', background: 'var(--surface)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
-          <div style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
-            Course Instructor: <strong style={{ color: 'var(--obsidian)' }}>{course.instructor?.name || 'Instructor'}</strong> ({course.instructor?.email || 'N/A'})
-          </div>
-
-          {isInstructor ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Student Access Code:</span>
-              <span className="badge-code" style={{ padding: '4px 10px', borderRadius: 'var(--radius-xs)', fontSize: '13px', fontWeight: 700 }}>
-                {courseCode}
-              </span>
-              <button onClick={copyAccessCode} className="btn btn-secondary btn-sm" style={{ padding: '4px 8px', fontSize: '12px' }}>
-                <CopyIcon size={12} />
-                {copiedCode ? 'Copied' : 'Copy'}
-              </button>
-            </div>
-          ) : (
-            <div style={{ fontSize: '13px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <LockIcon size={14} color="var(--red-accent)" />
-              Code Protected Enrollment
-            </div>
-          )}
-        </div>
 
         {enrolled && enrollment && (
           <div style={{ marginTop: '20px', padding: '16px', background: 'var(--jade-surface)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--jade-border)' }}>
