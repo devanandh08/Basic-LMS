@@ -2,10 +2,9 @@
 node_modules/
 */node_modules/
 
-# Production builds
-dist/
+# Production builds (client/dist is tracked for instant deployment)
 build/
-*/dist/
+
 
 # Environment variables
 .env
