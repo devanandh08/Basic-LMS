@@ -1,0 +1,371 @@
+{
+  "info": {
+    "_postman_id": "b3e0c7a4-6d91-4478-bc4a-9e1234567890",
+    "name": "Basic LMS API Collection",
+    "description": "Comprehensive Postman collection covering all endpoints for Authentication, Users, Courses, Lessons, Enrollments, Quizzes, Questions, Results, and Reports in the Basic LMS.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication & Users",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Student Demo\",\n  \"email\": \"student.demo@lms.com\",\n  \"password\": \"Student@123\",\n  \"role\": \"student\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+          }
+        },
+        {
+          "name": "Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "  pm.collectionVariables.set('token', jsonData.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@lms.com\",\n  \"password\": \"Admin@123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Get Profile (Me)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+          }
+        },
+        {
+          "name": "Get All Users (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/auth/users?role=&search=&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "users"],
+              "query": [
+                { "key": "role", "value": "" },
+                { "key": "search", "value": "" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update User Role (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"instructor\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/users/:userId/role", "host": ["{{baseUrl}}"], "path": ["auth", "users", ":userId", "role"], "variable": [{ "key": "userId", "value": "USER_ID_HERE" }] }
+          }
+        },
+        {
+          "name": "Delete User (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/auth/users/:userId", "host": ["{{baseUrl}}"], "path": ["auth", "users", ":userId"], "variable": [{ "key": "userId", "value": "USER_ID_HERE" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Courses",
+      "item": [
+        {
+          "name": "Get Courses (Search, Filter, Sort, Paginate)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/courses?search=&category=&sort=newest&page=1&limit=9",
+              "host": ["{{baseUrl}}"],
+              "path": ["courses"],
+              "query": [
+                { "key": "search", "value": "" },
+                { "key": "category", "value": "" },
+                { "key": "sort", "value": "newest" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "9" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Course By ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/courses/:id", "host": ["{{baseUrl}}"], "path": ["courses", ":id"], "variable": [{ "key": "id", "value": "COURSE_ID_HERE" }] }
+          }
+        },
+        {
+          "name": "Create Course (Instructor/Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Full-Stack Web Development with React & Node\",\n  \"description\": \"Comprehensive masterclass covering React, Express, MongoDB, and modern full-stack workflows.\",\n  \"category\": \"Web Development\",\n  \"isPublished\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/courses", "host": ["{{baseUrl}}"], "path": ["courses"] }
+          }
+        },
+        {
+          "name": "Update Course (Instructor/Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Course Title\",\n  \"description\": \"Updated description text.\",\n  \"category\": \"Web Development\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/courses/:id", "host": ["{{baseUrl}}"], "path": ["courses", ":id"], "variable": [{ "key": "id", "value": "COURSE_ID_HERE" }] }
+          }
+        },
+        {
+          "name": "Delete Course (Instructor/Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/courses/:id", "host": ["{{baseUrl}}"], "path": ["courses", ":id"], "variable": [{ "key": "id", "value": "COURSE_ID_HERE" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Lessons",
+      "item": [
+        {
+          "name": "Get Lessons By Course",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/lessons/course/:courseId", "host": ["{{baseUrl}}"], "path": ["lessons", "course", ":courseId"], "variable": [{ "key": "courseId", "value": "COURSE_ID_HERE" }] }
+          }
+        },
+        {
+          "name": "Create Lesson (Instructor/Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"courseId\": \"COURSE_ID_HERE\",\n  \"title\": \"Introduction & Environment Setup\",\n  \"content\": \"In this lesson, we will initialize our project and install Node.js.\",\n  \"videoUrl\": \"https://www.youtube.com/watch?v=sample\",\n  \"order\": 1\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/lessons", "host": ["{{baseUrl}}"], "path": ["lessons"] }
+          }
+        },
+        {
+          "name": "Update Lesson (Instructor/Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Lesson Title\",\n  \"content\": \"Updated lesson content.\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/lessons/:id", "host": ["{{baseUrl}}"], "path": ["lessons", ":id"], "variable": [{ "key": "id", "value": "LESSON_ID_HERE" }] }
+          }
+        },
+        {
+          "name": "Delete Lesson (Instructor/Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/lessons/:id", "host": ["{{baseUrl}}"], "path": ["lessons", ":id"], "variable": [{ "key": "id", "value": "LESSON_ID_HERE" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Enrollments & Progress",
+      "item": [
+        {
+          "name": "Enroll in Course (Student)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"courseId\": \"COURSE_ID_HERE\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/enrollments/enroll", "host": ["{{baseUrl}}"], "path": ["enrollments", "enroll"] }
+          }
+        },
+        {
+          "name": "Get My Enrollments",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/enrollments/my", "host": ["{{baseUrl}}"], "path": ["enrollments", "my"] }
+          }
+        },
+        {
+          "name": "Update Progress",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"courseId\": \"COURSE_ID_HERE\",\n  \"progress\": 100\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/enrollments/progress", "host": ["{{baseUrl}}"], "path": ["enrollments", "progress"] }
+          }
+        },
+        {
+          "name": "Cancel / Drop Enrollment",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/enrollments/:courseId", "host": ["{{baseUrl}}"], "path": ["enrollments", ":courseId"], "variable": [{ "key": "courseId", "value": "COURSE_ID_HERE" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Quizzes & Results",
+      "item": [
+        {
+          "name": "Get Quizzes By Course",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/quizzes/course/:courseId", "host": ["{{baseUrl}}"], "path": ["quizzes", "course", ":courseId"], "variable": [{ "key": "courseId", "value": "COURSE_ID_HERE" }] }
+          }
+        },
+        {
+          "name": "Get Quiz By ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/quizzes/:quizId", "host": ["{{baseUrl}}"], "path": ["quizzes", ":quizId"], "variable": [{ "key": "quizId", "value": "QUIZ_ID_HERE" }] }
+          }
+        },
+        {
+          "name": "Create Quiz With Questions (Instructor/Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"courseId\": \"COURSE_ID_HERE\",\n  \"title\": \"Week 1 Assessment\",\n  \"passingPercentage\": 60,\n  \"questions\": [\n    {\n      \"questionText\": \"What is JSX in React?\",\n      \"options\": [\n        \"JavaScript XML syntax extension\",\n        \"Java Standard Extension\",\n        \"JSON Syntax eXchange\",\n        \"JavaScript XHR\"\n      ],\n      \"correctOptionIndex\": 0\n    }\n  ]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/quizzes", "host": ["{{baseUrl}}"], "path": ["quizzes"] }
+          }
+        },
+        {
+          "name": "Submit Quiz Answers",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quizId\": \"QUIZ_ID_HERE\",\n  \"answers\": [\n    {\n      \"questionId\": \"QUESTION_ID_HERE\",\n      \"selectedOption\": 0\n    }\n  ]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/quizzes/submit", "host": ["{{baseUrl}}"], "path": ["quizzes", "submit"] }
+          }
+        },
+        {
+          "name": "Get My Quiz Results (Student)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/quizzes/results/my", "host": ["{{baseUrl}}"], "path": ["quizzes", "results", "my"] }
+          }
+        },
+        {
+          "name": "Get All Quiz Results (Admin/Instructor)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/quizzes/results/all", "host": ["{{baseUrl}}"], "path": ["quizzes", "results", "all"] }
+          }
+        },
+        {
+          "name": "Delete Quiz (Instructor/Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/quizzes/:id", "host": ["{{baseUrl}}"], "path": ["quizzes", ":id"], "variable": [{ "key": "id", "value": "QUIZ_ID_HERE" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Reports & Metrics",
+      "item": [
+        {
+          "name": "Get Dashboard Summary",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/reports/summary", "host": ["{{baseUrl}}"], "path": ["reports", "summary"] }
+          }
+        }
+      ]
+    }
+  ]
+}
+
